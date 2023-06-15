@@ -26,11 +26,10 @@ def index():
 
 def search(query):
     from application import Post, User, db
-    #TODO implement filtering (the hint is in the name ;) )
     #PS: filter by title ;)
     posts = list(map(
         lambda o: Post.withUser(o[1], o[0]),
-        db.session.query(User, Post).filter(User.id == Post.author_id).all())
+        db.session.query(User, Post).filter(User.id == Post.author_id, Post.title == query).all())
     )
     #Hint: you need to filter after the first filter ;)
 
@@ -64,8 +63,8 @@ def create():
 def get_post(id, check_author=True):
     from application import Post
 
-    post = None #TODO implement me (you probably need to google [get SQLAlchemy object by id])
-
+    post = None
+    post = Post.query.get(id)
     if post is None:
         abort(404, f"Post id {id} doesn't exist.")
 
@@ -92,9 +91,8 @@ def update(id):
             flash(error)
         else:
             from application import Post, db
-            #TODO implement
             #remember, we already have teh post object ;)
-
+            db.session.query(Post).filter(Post.id == id).update({Post.title: title, Post.body: body})
             db.session.commit()
 
             return redirect(url_for('blog.index'))
