@@ -76,11 +76,7 @@ def update(id):
             flash(error)
         else:
             db = get_db()
-            ##TODO implement
-            # db.execute(
-            #     '',
-            #     ()
-            # )
+            db.execute('UPDATE post SET title=?, body=? WHERE id=?',(title, body, id))
             db.commit()
             return redirect(url_for('blog.index'))
 
